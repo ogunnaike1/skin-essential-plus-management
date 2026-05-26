@@ -9,7 +9,7 @@ export const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["ADMIN", "STAFF"]).default("STAFF"),
+  role: z.enum(["ADMIN", "STAFF"]),
 });
 
 export const clientSchema = z.object({
@@ -17,7 +17,7 @@ export const clientSchema = z.object({
   phone: z.string().min(10, "Valid phone number required"),
   email: z.string().email().optional().or(z.literal("")),
   dateOfBirth: z.string().optional(),
-  status: z.enum(["ACTIVE", "VIP", "NEW", "INACTIVE"]).default("ACTIVE"),
+  status: z.enum(["ACTIVE", "VIP", "NEW", "INACTIVE"]),
   notes: z.string().optional(),
   tags: z.array(z.string()).optional(),
 });
@@ -43,7 +43,7 @@ export const paymentSchema = z.object({
   clientId: z.string().min(1, "Client is required"),
   amount: z.number().min(1, "Amount is required"),
   method: z.enum(["CASH", "TRANSFER", "CARD", "POS"]),
-  status: z.enum(["PENDING", "PAID", "PARTIAL", "REFUNDED"]).default("PAID"),
+  status: z.enum(["PENDING", "PAID", "PARTIAL", "REFUNDED"]),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
