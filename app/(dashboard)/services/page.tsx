@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "@/components/ui/custom-toast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 const categories = ["Hair", "Skin", "Nails", "Massage", "Brows & Lashes", "Packages"];
 
@@ -46,6 +47,7 @@ export default function ServicesPage() {
   const [filterCat, setFilterCat] = useState("ALL");
   const [addOpen, setAddOpen] = useState(false);
   const [editService, setEditService] = useState<Service | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const categoryRef = useRef<string>("");
@@ -121,15 +123,17 @@ export default function ServicesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this service?")) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
-      const res = await fetch(`/api/services/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/services/${deleteId}`, { method: "DELETE" });
       if (!res.ok) throw new Error((await res.json()).error);
-      setServices((prev) => prev.filter((s) => s.id !== id));
+      setServices((prev) => prev.filter((s) => s.id !== deleteId));
       toast.success("Service deleted");
     } catch {
       toast.error("Failed to delete service");
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -202,7 +206,7 @@ export default function ServicesPage() {
                       <h3 className="font-semibold text-[#1A202C] dark:text-white">{service.name}</h3>
                       <p className="text-xs text-[#A0AEC0] mt-0.5 line-clamp-1">{service.description}</p>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    <div className="flex gap-1 shrink-0">
                       <button
                         onClick={() => openEdit(service)}
                         className="p-1.5 rounded-lg hover:bg-[#F5F7FA] dark:hover:bg-[#2D3748] text-[#A0AEC0] hover:text-[#0346A0]"
@@ -210,7 +214,7 @@ export default function ServicesPage() {
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => handleDelete(service.id)}
+                        onClick={() => setDeleteId(service.id)}
                         className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-[#A0AEC0] hover:text-red-500"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -309,6 +313,15 @@ export default function ServicesPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        title="Delete Service"
+        message="This will permanently delete the service. This action cannot be undone."
+        confirmLabel="Delete Service"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }

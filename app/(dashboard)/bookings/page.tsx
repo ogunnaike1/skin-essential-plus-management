@@ -27,6 +27,7 @@ import { Progress } from "@/components/ui/progress";
 import { formatDate, formatTime, formatCurrency, getInitials } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/service-catalog";
 import { toast } from "@/components/ui/custom-toast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type Booking = {
   id: string;
@@ -56,6 +57,7 @@ function BookingsContent() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("ALL");
   const [newOpen, setNewOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (searchParams.get("new") === "true") {
@@ -96,15 +98,17 @@ function BookingsContent() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this booking?")) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
-      const res = await fetch(`/api/bookings/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/bookings/${deleteId}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
-      setBookings((prev) => prev.filter((b) => b.id !== id));
+      setBookings((prev) => prev.filter((b) => b.id !== deleteId));
       toast.success("Booking deleted");
     } catch {
       toast.error("Failed to delete booking");
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -204,7 +208,7 @@ function BookingsContent() {
                       <td className="px-4 py-4">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100">
+                            <Button variant="ghost" size="icon" className="text-[#A0AEC0] hover:text-[#1A202C] dark:hover:text-white">
                               <MoreHorizontal className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -224,7 +228,7 @@ function BookingsContent() {
                                 <XCircle className="w-4 h-4" /> Cancel
                               </DropdownMenuItem>
                             )}
-                            <DropdownMenuItem onSelect={() => handleDelete(booking.id)} className="text-red-500 focus:text-red-500">
+                            <DropdownMenuItem onSelect={() => setDeleteId(booking.id)} className="text-red-500 focus:text-red-500">
                               <Trash2 className="w-4 h-4" /> Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -246,6 +250,15 @@ function BookingsContent() {
           setBookings((prev) => [booking, ...prev]);
           setNewOpen(false);
         }}
+      />
+
+      <ConfirmDialog
+        open={!!deleteId}
+        title="Delete Booking"
+        message="This booking will be permanently deleted. This cannot be undone."
+        confirmLabel="Delete Booking"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
       />
     </div>
   );

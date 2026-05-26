@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDate, getInitials } from "@/lib/utils";
 import { toast } from "@/components/ui/custom-toast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { clientSchema, type ClientInput } from "@/lib/validations";
 
 type Client = {
@@ -42,6 +43,7 @@ export default function ClientsPage() {
   const [filter, setFilter] = useState("ALL");
   const [addOpen, setAddOpen] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   // Debounce search input — only hit the API 400ms after typing stops
   useEffect(() => {
@@ -67,18 +69,20 @@ export default function ClientsPage() {
 
   useEffect(() => { fetchClients(); }, [fetchClients]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this client? This cannot be undone.")) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
-      const res = await fetch(`/api/clients/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/clients/${deleteId}`, { method: "DELETE" });
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error);
       }
       toast.success("Client deleted");
-      setClients((prev) => prev.filter((c) => c.id !== id));
+      setClients((prev) => prev.filter((c) => c.id !== deleteId));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to delete client");
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -172,7 +176,7 @@ export default function ClientsPage() {
                       <td className="px-4 py-4">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100">
+                            <Button variant="ghost" size="icon" className="text-[#A0AEC0] hover:text-[#1A202C] dark:hover:text-white">
                               <MoreHorizontal className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -187,7 +191,7 @@ export default function ClientsPage() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="text-red-500 focus:text-red-500"
-                              onSelect={() => handleDelete(client.id)}
+                              onSelect={() => setDeleteId(client.id)}
                             >
                               <Trash2 className="w-4 h-4" /> Delete
                             </DropdownMenuItem>
@@ -222,6 +226,15 @@ export default function ClientsPage() {
           }}
         />
       )}
+
+      <ConfirmDialog
+        open={!!deleteId}
+        title="Delete Client"
+        message="This will permanently delete the client and all associated records. This action cannot be undone."
+        confirmLabel="Delete Client"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }

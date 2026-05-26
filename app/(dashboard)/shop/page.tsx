@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "@/components/ui/custom-toast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
 
@@ -89,6 +90,7 @@ export default function ShopPage() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
 
@@ -163,15 +165,17 @@ export default function ShopPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this product?")) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
     try {
-      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/products/${deleteId}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setProducts((prev) => prev.filter((p) => p.id !== deleteId));
       toast.success("Product deleted");
     } catch {
       toast.error("Failed to delete product");
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -326,7 +330,7 @@ export default function ShopPage() {
                             <DropdownMenuItem onSelect={() => openEdit(product)}>
                               <Pencil className="w-4 h-4" /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onSelect={() => handleDelete(product.id)} className="text-red-500 focus:text-red-500">
+                            <DropdownMenuItem onSelect={() => setDeleteId(product.id)} className="text-red-500 focus:text-red-500">
                               <Trash2 className="w-4 h-4" /> Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -371,6 +375,15 @@ export default function ShopPage() {
           </AnimatePresence>
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!deleteId}
+        title="Delete Product"
+        message="This will permanently delete the product. This action cannot be undone."
+        confirmLabel="Delete Product"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
+      />
 
       {/* Add / Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={(o) => { if (!o) setDialogOpen(false); }}>

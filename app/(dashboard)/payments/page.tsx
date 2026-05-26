@@ -241,7 +241,7 @@ export default function PaymentsPage() {
                         {payment.status !== "PAID" && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100">
+                              <Button variant="ghost" size="icon" className="text-[#A0AEC0] hover:text-[#1A202C] dark:hover:text-white">
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>
                             </DropdownMenuTrigger>
