@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm uninstall *)",
+      "Bash(del \"c:\\\\Workspace\\\\skin-essential-management\\\\lib\\\\prisma.ts\")",
+      "Bash(del \"c:\\\\Workspace\\\\skin-essential-management\\\\prisma.config.ts\")",
+      "Bash(Remove-Item \"c:\\\\Workspace\\\\skin-essential-management\\\\lib\\\\prisma.ts\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Workspace\\\\skin-essential-management\\\\prisma.config.ts\" -Force)"
+    ]
+  }
+}
