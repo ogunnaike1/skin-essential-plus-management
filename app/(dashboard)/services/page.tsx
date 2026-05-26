@@ -15,7 +15,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 
 const categories = ["Hair", "Skin", "Nails", "Massage", "Brows & Lashes", "Packages"];
 

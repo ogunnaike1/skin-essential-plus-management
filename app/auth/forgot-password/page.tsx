@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2, ArrowLeft, Mail } from "lucide-react";
 import logoSrc from "@/public/images/logo.png";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

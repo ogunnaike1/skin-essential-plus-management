@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 import logoSrc from "@/public/images/logo.png";
 import Link from "next/link";
 import { loginSchema, type LoginInput } from "@/lib/validations";

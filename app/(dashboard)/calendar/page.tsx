@@ -24,7 +24,7 @@ import {
   ChevronRight, ChevronLeft, Check, Loader2,
   XCircle, CheckCircle, User, Scissors, CreditCard,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 
 type Booking = {
   id: string;

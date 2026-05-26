@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import logoSrc from "@/public/images/logo.png";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 import Link from "next/link";
 import { registerSchema } from "@/lib/validations";
 import type { z } from "zod";

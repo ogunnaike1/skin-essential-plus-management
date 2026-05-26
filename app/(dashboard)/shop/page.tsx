@@ -21,7 +21,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatCurrency } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
 

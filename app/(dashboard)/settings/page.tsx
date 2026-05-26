@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 
 export default function SettingsPage() {
   const [saving, setSaving] = useState(false);

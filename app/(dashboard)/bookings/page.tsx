@@ -26,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { formatDate, formatTime, formatCurrency, getInitials } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/service-catalog";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 
 type Booking = {
   id: string;

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 
 const mockStaff = [
   { id: "1", name: "Ada Nwosu", email: "ada@skinessential.com", role: "ADMIN", bookings: 48, joinedAt: "Jan 2024", active: true },

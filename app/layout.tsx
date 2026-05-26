@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SessionProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
             {children}
-            <Toaster richColors position="bottom-right" />
+            <Toaster position="bottom-right" gap={8} visibleToasts={5} />
           </ThemeProvider>
         </SessionProvider>
       </body>

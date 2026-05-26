@@ -12,7 +12,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { formatDate, formatCurrency, getInitials } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 
 type ClientDetail = {
   id: string;

@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Search, Bell, Plus, Moon, Sun } from "lucide-react";
+import { Search, Plus, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
@@ -80,10 +81,7 @@ export function TopBar() {
           )}
 
           {/* Notification bell */}
-          <button className="relative p-2 rounded-lg text-[#A0AEC0] hover:bg-[#F5F7FA] dark:hover:bg-[#1A2535] hover:text-[#1A202C] dark:hover:text-white transition-colors">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#0346A0]" />
-          </button>
+          <NotificationBell />
 
           {/* New Booking */}
           <Button size="sm" asChild>

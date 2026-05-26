@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { formatDate, formatCurrency, getInitials } from "@/lib/utils";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 import { StatCard } from "@/components/dashboard/StatCard";
 
 const methodColors: Record<string, string> = {

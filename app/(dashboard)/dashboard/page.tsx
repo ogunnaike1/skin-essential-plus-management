@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatTime, getInitials, relativeTime } from "@/lib/utils";
 import Link from "next/link";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/custom-toast";
 
 interface Stats {
   todayBookings: number;
