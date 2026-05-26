@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Plus, Pencil, Trash2, Clock, Tag, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Clock, Tag, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -42,6 +42,8 @@ const emptyForm = { name: "", description: "", duration: "", price: "", category
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [fetching, setFetching] = useState(true);
+  const [search, setSearch] = useState("");
+  const [filterCat, setFilterCat] = useState("ALL");
   const [addOpen, setAddOpen] = useState(false);
   const [editService, setEditService] = useState<Service | null>(null);
   const [form, setForm] = useState(emptyForm);
@@ -137,26 +139,56 @@ export default function ServicesPage() {
     if (!v) { setAddOpen(false); setEditService(null); }
   };
 
+  const filtered = services.filter((s) => {
+    const q = search.toLowerCase();
+    const matchSearch = s.name.toLowerCase().includes(q) || (s.description ?? "").toLowerCase().includes(q);
+    const matchCat = filterCat === "ALL" || s.category === filterCat;
+    return matchSearch && matchCat;
+  });
+
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[#718096]">
-          {fetching ? "Loading…" : `${services.length} service${services.length !== 1 ? "s" : ""} total`}
-        </p>
-        <Button onClick={openAdd}>
-          <Plus className="w-4 h-4" /> Add Service
-        </Button>
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div className="flex gap-2 flex-1 w-full sm:w-auto">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A0AEC0]" />
+            <Input
+              placeholder="Search services…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <select
+            value={filterCat}
+            onChange={(e) => setFilterCat(e.target.value)}
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm text-[#1A202C] dark:text-white"
+          >
+            <option value="ALL">All Categories</option>
+            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <p className="text-sm text-[#718096]">
+            {fetching ? "Loading…" : `${filtered.length} of ${services.length} service${services.length !== 1 ? "s" : ""}`}
+          </p>
+          <Button onClick={openAdd}>
+            <Plus className="w-4 h-4" /> Add Service
+          </Button>
+        </div>
       </div>
 
       {fetching ? (
         <div className="flex justify-center py-20">
           <Loader2 className="w-6 h-6 animate-spin text-[#A0AEC0]" />
         </div>
-      ) : services.length === 0 ? (
-        <div className="text-center py-20 text-[#A0AEC0]">No services yet. Add your first one.</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-20 text-[#A0AEC0]">
+          {search || filterCat !== "ALL" ? "No services match your search." : "No services yet. Add your first one."}
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {services.map((service, i) => (
+          {filtered.map((service, i) => (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, y: 12 }}

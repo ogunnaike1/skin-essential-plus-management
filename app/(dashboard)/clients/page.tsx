@@ -38,15 +38,22 @@ export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filter, setFilter] = useState("ALL");
   const [addOpen, setAddOpen] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
+
+  // Debounce search input — only hit the API 400ms after typing stops
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 400);
+    return () => clearTimeout(t);
+  }, [search]);
 
   const fetchClients = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (search) params.set("search", search);
+      if (debouncedSearch) params.set("search", debouncedSearch);
       if (filter !== "ALL") params.set("status", filter);
       const res = await fetch(`/api/clients?${params}`);
       if (!res.ok) throw new Error();
@@ -56,7 +63,7 @@ export default function ClientsPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, filter]);
+  }, [debouncedSearch, filter]);
 
   useEffect(() => { fetchClients(); }, [fetchClients]);
 
