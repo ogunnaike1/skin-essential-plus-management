@@ -20,6 +20,15 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Skin Essential | Client Management",
   description: "Professional client management for your beauty & wellness business",
+  icons: {
+    icon: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
+  openGraph: {
+    title: "Skin Essential | Client Management",
+    description: "Professional client management for your beauty & wellness business",
+    images: [{ url: "/images/logo.png" }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
