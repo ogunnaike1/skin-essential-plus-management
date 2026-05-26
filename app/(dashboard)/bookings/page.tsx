@@ -58,9 +58,11 @@ function BookingsContent() {
   const [filter, setFilter] = useState("ALL");
   const [newOpen, setNewOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [initialClientId, setInitialClientId] = useState("");
 
   useEffect(() => {
     if (searchParams.get("new") === "true") {
+      setInitialClientId(searchParams.get("clientId") ?? "");
       setNewOpen(true);
       router.replace("/bookings", { scroll: false });
     }
@@ -245,10 +247,12 @@ function BookingsContent() {
 
       <NewBookingModal
         open={newOpen}
-        onClose={() => setNewOpen(false)}
+        initialClientId={initialClientId}
+        onClose={() => { setNewOpen(false); setInitialClientId(""); }}
         onCreated={(booking) => {
           setBookings((prev) => [booking, ...prev]);
           setNewOpen(false);
+          setInitialClientId("");
         }}
       />
 
@@ -272,8 +276,9 @@ export default function BookingsPage() {
   );
 }
 
-function NewBookingModal({ open, onClose, onCreated }: {
+function NewBookingModal({ open, initialClientId = "", onClose, onCreated }: {
   open: boolean;
+  initialClientId?: string;
   onClose: () => void;
   onCreated: (booking: Booking) => void;
 }) {
@@ -282,7 +287,7 @@ function NewBookingModal({ open, onClose, onCreated }: {
   const [services, setServices] = useState<Service[]>([]);
   const [staff, setStaff] = useState<Staff[]>([]);
 
-  const [clientId, setClientId] = useState("");
+  const [clientId, setClientId] = useState(initialClientId);
   const [categoryName, setCategoryName] = useState("");
   const [serviceId, setServiceId] = useState("");
   const [customService, setCustomService] = useState("");
@@ -294,12 +299,14 @@ function NewBookingModal({ open, onClose, onCreated }: {
 
   useEffect(() => {
     if (!open) return;
+    setClientId(initialClientId);
+    setStep(initialClientId ? 1 : 0);
     Promise.all([
       fetch("/api/clients").then((r) => r.json()),
       fetch("/api/services").then((r) => r.json()),
       fetch("/api/staff").then((r) => r.json()),
     ]).then(([c, s, st]) => { setClients(c); setServices(s); setStaff(st); });
-  }, [open]);
+  }, [open, initialClientId]);
 
   const isOthers = categoryName === "Others";
   const filteredServices = services.filter((s) => s.category === categoryName);
@@ -325,6 +332,8 @@ function NewBookingModal({ open, onClose, onCreated }: {
     setCustomService(""); setStaffId("");
     setDate(""); setTime(""); setNotes("");
   };
+
+  const selectedClientName = clients.find((c) => c.id === clientId)?.name;
 
   const goNext = () => setStep((s) => s + 1);
   const goPrev = () => {
@@ -414,6 +423,11 @@ function NewBookingModal({ open, onClose, onCreated }: {
             {/* ── Step 1: Category grid ── */}
             {step === 1 && (
               <div className="space-y-2">
+                {selectedClientName && (
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#EBF1FB] dark:bg-[#1a2e4a] text-[#0346A0] text-sm font-medium mb-1">
+                    <Check className="w-4 h-4" /> Booking for {selectedClientName}
+                  </div>
+                )}
                 <Label>Service Category *</Label>
                 <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
                   {CATEGORIES.map((cat) => (

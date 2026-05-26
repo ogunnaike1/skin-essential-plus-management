@@ -50,6 +50,9 @@ export async function POST(req: NextRequest) {
         status: data.status,
         notes: data.notes || null,
         tags: data.tags ?? [],
+        skin_type: data.skin_type || null,
+        allergies: data.allergies || null,
+        recommendations: data.recommendations || null,
       })
       .select()
       .single();

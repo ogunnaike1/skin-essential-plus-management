@@ -32,8 +32,24 @@ type Client = {
   email: string | null;
   status: string;
   joinedAt: string;
+  skin_type: string | null;
+  allergies: string | null;
+  recommendations: string | null;
   _count: { bookings: number };
 };
+
+const SKIN_TYPES = [
+  { value: "NORMAL",         label: "Normal" },
+  { value: "OILY",           label: "Oily" },
+  { value: "DRY",            label: "Dry" },
+  { value: "COMBINATION",    label: "Combination" },
+  { value: "SENSITIVE",      label: "Sensitive" },
+  { value: "ACNE_PRONE",     label: "Acne-Prone" },
+  { value: "MATURE",         label: "Mature / Aging" },
+  { value: "HYPERPIGMENTED", label: "Hyperpigmented" },
+  { value: "DEHYDRATED",     label: "Dehydrated" },
+  { value: "ROSACEA",        label: "Rosacea-Prone" },
+];
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -45,7 +61,6 @@ export default function ClientsPage() {
   const [editClient, setEditClient] = useState<Client | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  // Debounce search input — only hit the API 400ms after typing stops
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 400);
     return () => clearTimeout(t);
@@ -248,6 +263,7 @@ function AddClientModal({ open, onClose, onAdded }: {
     useForm<ClientInput>({ resolver: zodResolver(clientSchema), defaultValues: { status: "ACTIVE" } });
 
   const status = watch("status");
+  const skinType = watch("skin_type");
 
   const onSubmit = async (data: ClientInput) => {
     try {
@@ -268,11 +284,12 @@ function AddClientModal({ open, onClose, onAdded }: {
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) { reset(); onClose(); } }}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Add New Client</DialogTitle></DialogHeader>
         <ClientForm
-          register={register} errors={errors} status={status}
-          onStatusChange={(v) => setValue("status", v as ClientInput["status"])}
+          register={register} errors={errors}
+          status={status} onStatusChange={(v) => setValue("status", v as ClientInput["status"])}
+          skinType={skinType ?? ""} onSkinTypeChange={(v) => setValue("skin_type", v)}
           onSubmit={handleSubmit(onSubmit)} isSubmitting={isSubmitting}
           onCancel={() => { reset(); onClose(); }} submitLabel="Add Client"
         />
@@ -294,10 +311,14 @@ function EditClientModal({ client, onClose, onUpdated }: {
         phone: client.phone,
         email: client.email ?? "",
         status: client.status as ClientInput["status"],
+        skin_type: client.skin_type ?? "",
+        allergies: client.allergies ?? "",
+        recommendations: client.recommendations ?? "",
       },
     });
 
   const status = watch("status");
+  const skinType = watch("skin_type");
 
   const onSubmit = async (data: ClientInput) => {
     try {
@@ -317,11 +338,12 @@ function EditClientModal({ client, onClose, onUpdated }: {
 
   return (
     <Dialog open onOpenChange={(o) => { if (!o) { reset(); onClose(); } }}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Edit Client</DialogTitle></DialogHeader>
         <ClientForm
-          register={register} errors={errors} status={status}
-          onStatusChange={(v) => setValue("status", v as ClientInput["status"])}
+          register={register} errors={errors}
+          status={status} onStatusChange={(v) => setValue("status", v as ClientInput["status"])}
+          skinType={skinType ?? ""} onSkinTypeChange={(v) => setValue("skin_type", v)}
           onSubmit={handleSubmit(onSubmit)} isSubmitting={isSubmitting}
           onCancel={() => { reset(); onClose(); }} submitLabel="Save Changes"
         />
@@ -330,11 +352,13 @@ function EditClientModal({ client, onClose, onUpdated }: {
   );
 }
 
-function ClientForm({ register, errors, status, onStatusChange, onSubmit, isSubmitting, onCancel, submitLabel }: {
+function ClientForm({ register, errors, status, onStatusChange, skinType, onSkinTypeChange, onSubmit, isSubmitting, onCancel, submitLabel }: {
   register: ReturnType<typeof useForm<ClientInput>>["register"];
   errors: ReturnType<typeof useForm<ClientInput>>["formState"]["errors"];
   status: string;
   onStatusChange: (v: string) => void;
+  skinType: string;
+  onSkinTypeChange: (v: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   isSubmitting: boolean;
   onCancel: () => void;
@@ -373,9 +397,32 @@ function ClientForm({ register, errors, status, onStatusChange, onSubmit, isSubm
             </SelectContent>
           </Select>
         </div>
+
+        <div className="col-span-2 space-y-1.5">
+          <Label>Skin Type</Label>
+          <Select value={skinType} onValueChange={onSkinTypeChange}>
+            <SelectTrigger><SelectValue placeholder="Select skin type" /></SelectTrigger>
+            <SelectContent>
+              {SKIN_TYPES.map((s) => (
+                <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="col-span-2 space-y-1.5">
+          <Label>Allergies / Sensitivities</Label>
+          <Textarea placeholder="e.g. Retinol, Fragrance, Nuts…" rows={2} {...register("allergies")} />
+        </div>
+
+        <div className="col-span-2 space-y-1.5">
+          <Label>Recommendations</Label>
+          <Textarea placeholder="Post-treatment advice, products to use, follow-up suggestions…" rows={3} {...register("recommendations")} />
+        </div>
+
         <div className="col-span-2 space-y-1.5">
           <Label>Notes</Label>
-          <Textarea placeholder="Any relevant notes…" rows={3} {...register("notes")} />
+          <Textarea placeholder="Any relevant notes…" rows={2} {...register("notes")} />
         </div>
       </div>
       <DialogFooter>

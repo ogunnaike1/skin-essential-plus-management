@@ -20,6 +20,9 @@ export const clientSchema = z.object({
   status: z.enum(["ACTIVE", "VIP", "NEW", "INACTIVE"]),
   notes: z.string().optional(),
   tags: z.array(z.string()).optional(),
+  skin_type: z.string().optional(),
+  allergies: z.string().optional(),
+  recommendations: z.string().optional(),
 });
 
 export const serviceSchema = z.object({

@@ -59,6 +59,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         ...(data.status && { status: data.status }),
         ...(data.notes !== undefined && { notes: data.notes || null }),
         ...(data.tags && { tags: data.tags }),
+        ...(data.skin_type !== undefined && { skin_type: data.skin_type || null }),
+        ...(data.allergies !== undefined && { allergies: data.allergies || null }),
+        ...(data.recommendations !== undefined && { recommendations: data.recommendations || null }),
       })
       .eq("id", id)
       .select()
