@@ -3,7 +3,8 @@
     "allow": [
       "PowerShell(Get-ChildItem \"c:\\\\Workspace\\\\skin-essential-management\\\\public\" -Recurse | ForEach-Object { $_.FullName })",
       "PowerShell(Get-ChildItem -Recurse \"c:\\\\Workspace\\\\skin-essential-management\\\\public\" | ForEach-Object { $_.FullName })",
-      "PowerShell($bytes = [System.IO.File]::ReadAllBytes\\(\"c:\\\\Workspace\\\\skin-essential-management\\\\public\\\\images\\\\logo.png\"\\); $base64 = [System.Convert]::ToBase64String\\($bytes\\); Write-Output \"data:image/png;base64,$base64\" | Out-File \"c:\\\\Workspace\\\\skin-essential-management\\\\public\\\\images\\\\logo-b64.txt\" -Encoding utf8; Write-Output \"Done. Length: $\\($base64.Length\\)\")"
+      "PowerShell($bytes = [System.IO.File]::ReadAllBytes\\(\"c:\\\\Workspace\\\\skin-essential-management\\\\public\\\\images\\\\logo.png\"\\); $base64 = [System.Convert]::ToBase64String\\($bytes\\); Write-Output \"data:image/png;base64,$base64\" | Out-File \"c:\\\\Workspace\\\\skin-essential-management\\\\public\\\\images\\\\logo-b64.txt\" -Encoding utf8; Write-Output \"Done. Length: $\\($base64.Length\\)\")",
+      "PowerShell($bytes = New-Object byte[] 32; [System.Security.Cryptography.RandomNumberGenerator]::Create\\(\\).GetBytes\\($bytes\\); [System.Convert]::ToBase64String\\($bytes\\))"
     ]
   }
 }
